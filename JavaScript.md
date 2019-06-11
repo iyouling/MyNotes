@@ -1095,9 +1095,38 @@ console.log(age); //临时改变后就恢复
 })();
 ```
 
+#### 作业
+```
+1 下面输出的结果是
+function doSomething(){
+var authorName="创客学院";
+blogName="Web全栈";
+alert(authorName);
+}
+doSomething(); //
+alert(blogName); //
+alert(authorName); //
+-
+2 下面输出的结果是
+var authorName="小美老师";
+function doSomething(){
+	var blogName="ivan";
+	function innerSay(){
+		alert(blogName);
+	}
+	innerSay();
+}
+alert(authorName); //
+alert(blogName); //
+doSomething(); //
+innerSay() //
+```
+
 ---
 ### D6 闭包
 > [扩展学习](https://www.cnblogs.com/onepixel/p/5062456.html)
+
+
 ---
 ### D7 数组对象
 ---
