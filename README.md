@@ -1,2 +1,2 @@
 # MyNotes
-learn everything
+Learn everything
