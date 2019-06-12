@@ -944,7 +944,7 @@ console.log(typeof a);
 > 能读写变量的范围，函数外不能访问函数内变量
 > 封装
 
-1. 变量声明定义
+#### 变量声明定义
 ```
 blanket = 'banana'; //当变量赋值，找不到声明时，默认会把它当成全局变量
 var country = "China"; //全局变量
@@ -960,7 +960,7 @@ fn();
 console.log(age); //不能访问函数内部资源，报错：age is not defined
 ```
 
-2. 变量赋值，无声明定义
+#### 变量赋值，无声明定义
 ```
 function fun()
 {
@@ -973,7 +973,7 @@ console.log(count);
 console.log(lCount);
 ```
 
-3. 定义声明的提升
+#### 定义声明的提升
 ```
 //变量声明和赋值
 var getName = function()
@@ -1007,7 +1007,7 @@ function sum()
 sum();
 ```
 
-4. 变量删除
+#### 变量删除
 ```
 var a = 1;
 b = 2;
@@ -1023,7 +1023,7 @@ console.log(b);
 console.log(c);
 ```
 
-5. 块作用域
+#### 块作用域
 ```
 if(true)
 {
@@ -1031,7 +1031,7 @@ if(true)
 }
 ```
 
-6. 作用域链
+#### 作用域链
 > 函数嵌套→形成链条→变量回溯（当前没有，沿着链条追查上级）
 ```
 var country = 'China',age = 80; //全局变量（任意地方用）
@@ -1072,7 +1072,7 @@ a[0]();
 a[1]();
 ```
 
-7. 提升作用域范围：with
+#### 提升作用域范围：with
 ```
 var person = {
 	name: 'syn',
@@ -1088,7 +1088,7 @@ with(person.beautify) //临时提升作用域为最近
 console.log(age); //临时改变后就恢复
 ```
 
-8. 匿名函数自执行
+#### 匿名函数自执行
 ```
 (function(){
 	var a = b = 3;
@@ -1124,8 +1124,142 @@ innerSay() //
 
 ---
 ### D6 闭包
-> [扩展学习](https://www.cnblogs.com/onepixel/p/5062456.html)
+> [闭包扩展学习](https://www.cnblogs.com/onepixel/p/5062456.html)
+> 
+> [JQuery源码解析](https://github.com/chokcoco/jQuery-)
+> 
+> 通过引用访问函数内的函数，实现信息的驻留。
+> 
+> 驻留：信息保持（引用在，空间则不销毁）
 
+#### 引用在空间不灭
+```
+var aa;
+//规划fn，并没有分配空间
+var aa;
+function fn()
+{
+	var count = 0;
+	function fn1()
+	{
+		console.log(count++);
+	}
+	aa = fn1;
+	return fn1;
+}
+var p = fn(); //分配了空间，引用传值
+p(); //0
+p(); //1
+p(); //2 通过引用访问函数内的函数，实现信息的驻留
+aa();
+fn()();
+var p1 = fn();
+p1();
+p1();
+p1();
+aa();
+aa();
+```
+```
+var fn;
+var person = function() //函数作用域：有封装隐藏作用
+{
+	var _name = 'yzg'; //私有private，外部不能访问
+	var _count = 0;
+	function getName()
+	{
+		_count ++;
+		return _name;
+	}
+	fn = getName; //局部函数赋给全局变量，实现外部访问（该方式污染了全局空间，慎用）
+	function getCount()
+	{
+		return _count; //获取访问次数
+	}
+	return getCount; //访回函数名（public，暴露内部信息）
+}
+var p = person(); //去掉试试
+console.log(fn());
+console.log(p()); //通过子函数访问，能访问局部变量
+console.log(fn());
+console.log(fn());
+console.log(p()); //驻留：子函数的引用，多次调用，其内部的变量将一直保持，直至引用不存在。空间浪费
+```
+
+#### 共享封闭空间
+```
+function fn()
+{
+	var num = 0;
+	return {
+		add1:function()
+		{
+			num ++;
+			console.log(num);
+		}
+		add2:function()
+		{
+			num += 2;
+			console.log(num);
+		}
+	}
+}
+var c = fn();
+c.add1();
+c.add2();
+c.add1();
+```
+
+#### 快照——新的备份
+> 存档此时函数作用域内的现场信息（包括局部变量，参数，函数等）——>创建新实例
+```
+function fun(a)
+{
+	return function(b)
+	{
+		return function(c)
+		{
+			console.log(a+b+c);
+		}
+	}
+}
+var x = fun(3); //快照：驻留了参数a的信息
+y = fun(7);
+x(4)(5);
+x(2)(1);
+y(2)(1);
+z = fun(5)(6);
+z(2);
+```
+
+#### 链式调用
+> JQuery库
+```
+var name = 'syn';
+//匿名函数自执行（函数内是独立的名字空间，避免和外面的名字冲突）
+(function(){
+	var name = 'abc';
+	alert(name); //local
+	var jQuery = function()
+	{
+		return {
+			getName: function()
+			{
+				return name;
+			},
+			setName: function(v)
+			{
+				name = v;
+				return this; //返回对象本身，链式调用
+			}
+		}
+	}
+	window.$ = jQuery; //暴露对外的接口
+})();
+alert(name); //global
+alert($().getName());
+alert($().setName('lzb').getName()); //链式调用，信息的驻留
+```
 
 ---
 ### D7 数组对象
