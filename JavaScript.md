@@ -3,6 +3,7 @@
 > ###### 课程源：[创客学院](http://www.makeru.com.cn/course/550.html)
 > ###### .MD(markdown)：[教程链接](https://www.cnblogs.com/liugang-vip/p/6337580.html)
 > ###### ~~不忘初心，继续前行~~
+
 ---
 ### 目录
 * D1 初识JS
@@ -19,6 +20,7 @@
 * D12 ES6面向对象、let和const
 * D13 ES6-变量的解构赋值
 * D14 ES6-Map和Set数据结构、循环
+
 ---
 ### D1 初识JS
 #### 序
@@ -146,6 +148,7 @@ shopping(50);
 //反复多次做一件事
 shopping(20);
 ```
+
 ---
 ### D2 变量与数据类型
 #### 语法识别
@@ -455,7 +458,7 @@ var phone2 = createComputer('中兴');
 
 ##### 遍历对象&遍历数组
 ```
-//for in用于遍历对象的键值，不用于数组的遍历
+//for in用于遍历对象的键，不用于数组的遍历
 for(var key in obj)
 {
 	console.log(key + obj[key]);
@@ -519,6 +522,7 @@ function things()
 	do2(3,4);
 	do3(5,6);
 }
+things();
 ```
 
 #### 函数定义方法
@@ -751,7 +755,7 @@ console.log(fn(5).run(3));
 //return独立一行，自动加分号，return undefined
 function foo()
 {
-	return 
+	return
 	{
 		bar: 'hello'
 	};
@@ -1136,7 +1140,6 @@ innerSay() //
 ```
 var aa;
 //规划fn，并没有分配空间
-var aa;
 function fn()
 {
 	var count = 0;
@@ -1261,19 +1264,1503 @@ alert($().getName());
 alert($().setName('lzb').getName()); //链式调用，信息的驻留
 ```
 
+#### bind例
+```
+//只保留一份快照，结果为3
+var buttons = [{name:'b1'},{name:'b2'},{name:'b3'}];
+function bind()
+{
+	for(var i=0;i<buttons.length;i++)
+	{
+		buttons[i].onclick = function()
+		{
+			alert(i);
+		}
+	}
+}
+bind();
+buttons[0].onclick();
+buttons[1].onclick();
+buttons[2].onclick();
+//以下是修改，使结果得到0，1，2
+function bind()
+{
+	for(var i=0;i<buttons.length;i++)
+	{
+		(function(m){
+			buttons[i].onclick = function()
+			{
+				alert(m);
+			}
+		})(i)
+	}
+}
+//修改2
+function bind()
+{
+	for(let i=0;i<buttons.length;i++)
+	{
+		buttons[i].onclick = function()
+		{
+			alert(i);
+		}
+	}
+}
+```
+
+#### 综合例，难点
+```
+function fun(n,o)
+{
+	console.log(o);
+	return {
+		fun:function(m)
+		{
+			return fun(m,n);
+		}
+	}
+}
+var a = fun(0);
+a.fun(1);
+a.fun(2);
+a.fun(3);
+var b = fun(0).fun(1).fun(2).fun(3);
+var c = fun(0).fun(1);
+c.fun(2);
+c.fun(3);
+```
+
 ---
 ### D7 数组对象
+> [数组对象操作手册](http://www.w3school.com.cn/jsref/jsref_obj_array.asp)
+#### 数组的创建和读写
+```
+//数组的创建
+var num = [2,3,4,5];
+var num1 = new Array('lili','lucy');
+console.log(num);
+console.log(num[2]);
+num[1] = 55;
+console.log(num);
+//数组的遍历
+for(var i = 0;i<num.length;i++)
+{
+	console.log(num[i]);
+}
+//数组的嵌套
+var worker = [
+	'lili',
+	[2,3], //存址
+	[5,6,function(){console.log('fn');}], //存址
+	{name:'syn',age:30} //存址
+];
+//访问
+var a = worker[2];
+var fn = a[2];
+fn();
+//或者
+worker[2][2]();
+//多维数组
+var count = [[[1,2,3],[4,5,6],[7,8,9]],[1,2,3],[4,5,6],[7,8,9]],[1,2,3],[4,5,6],[7,8,9]]];
+```
+
+#### 数组的操作方法
+```
+Array 对象方法
+方法	        描述
+push()	    向数组的末尾添加一个或更多元素，并返回新的长度。
+pop()	    删除并返回数组的最后一个元素
+shift()	    删除并返回数组的第一个元素
+unshift()	向数组的开头添加一个或更多元素，并返回新的长度。
+slice()	    从某个已有的数组返回选定的元素
+splice()	删除元素，并向数组添加新元素。
+concat()	连接两个或更多的数组，并返回结果。
+sort()	    对数组的元素进行排序
+reverse()	颠倒数组中元素的顺序。
+join()	    把数组的所有元素放入一个字符串。元素通过指定的分隔符进行分隔。
+toString()	把数组转换为字符串，并返回结果。
+indexOf()   返回元素在数组中的位置
+---
+toSource()	返回该对象的源代码。
+toLocaleString()	把数组转换为本地数组，并返回结果。
+valueOf()	返回数组对象的原始值
+```
+
+##### 改变原数组的操作方法
+```
+var a = [7,2,5,9,8,1,2,3,4,5,6];
+a.push(7);
+a.pop();
+a.unshift(2);
+a.shift();
+a.splice(2,2,5);
+a.sort(); //字符串排序
+a.reverse();
+console.log(a);
+```
+
+##### 不改变原数组的操作方法
+* 添加分隔符
+```
+var a = [7,2,5,9,8,1,2,3,4,5,6];
+console.log(a.indexOf(2));
+console.log(a.slice(1,3));
+console.log(a.slice(2));
+console.log(a.join(':')); //数组转字符串
+function join(){} //实现join函数
+```
+* 拼接数组
+```
+var age1 = [1,2,3];
+var age2 = [4,5,6];
+console.log(age1.concat(age2));
+var age3 = age1.concat(age1,age2);
+console.log(age3);
+function concat(){}
+```
+* 遍历数组
+```
+var w = [11,22,33];
+//for循环
+for(var i=0; i<w.length; i++)
+{
+	console.log(w[i]);
+}
+//for of遍历
+for(var j of w)
+{
+	console.log(j);
+}
+//forEach遍历：参数为回调函数，好处是灵活将算法和循环分开
+var a = [];
+function callback(v)
+{
+	a.push(v**2);
+	console.log(v);
+}
+w.forEach(callback);
+console.log(a);
+//map遍历：会得到新的数组，转换数组中的元素
+var new_w = w.map(function(v){return v**2});
+console.log(new_w);
+function map(a,callback)
+{
+	var b = [];
+	for(var i = 0; i<a.length; i++)
+	{
+		b[i] = callback(a[i]);
+	}
+	return b;
+}
+console.log(map(w,function(v){return v**2;}))
+```
+* 转字符串
+```
+var a = [1,2,3];
+console.log(a.toString()); //与join不传参的结果一致
+```
+
+#### 各函数实现
+```
+var a = [44,55,66,11,22,33];
+//删除并返回数组的最后一个元素
+function pop1(arr)
+{
+	var ret = arr[arr.length - 1];
+	--arr.length;
+	return ret;
+}
+console.log(pop1(a));
+console.log(a);
+//删除并返回数组的第一个元素
+function shift1(arr)
+{
+	arr.reverse();
+	var ret = pop1(arr);
+	arr.reverse();
+	return ret;
+}
+console.log(shift1(a));
+console.log(a);
+//向数组的末尾添加一个元素，并返回新的长度。
+function push1(arr, str)
+{
+	arr[arr.length] = str;
+	return arr.length;
+}
+console.log(push1(a, '我爱你'));
+console.log(a);
+//向数组的开头添加一个元素，并返回新的长度。
+function unshift1(arr, str)
+{
+	for(var i=arr.length;i>=0;i--)
+	{
+		if(i>0)
+		{
+			arr[i] = arr[i-1];
+		}
+		else
+		{
+			arr[i] = str;
+		}
+	}
+	return arr.length;
+}
+console.log(unshift1(a, '我也爱你'));
+console.log(a);
+//从某个已有的数组返回选定的元素
+function slice1(arr, start, end)
+{
+	var b = [];
+	for(var i=start;i<end;i++)
+	{
+		push1(b, arr[i]);
+	}
+	return b;
+}
+console.log(slice1(a, 2, 4));
+console.log(a);
+//把数组的所有元素放入一个字符串。元素通过指定的分隔符进行分隔。
+function join1(arr, separator)
+{
+	var b = '';
+	for(var i=0;i<arr.length;i++)
+	{
+		if(i<arr.length-1)
+		{
+			b += arr[i] + separator;
+		}
+		else
+		{
+			b += arr[i];
+		}
+	}
+	return b;
+}
+function join2(arr, separator)
+{
+	var b = '';
+	for(var i=0;i<arr.length;i++)
+	{
+		b += arr[i];
+		if(i<arr.length-1)
+		{
+			b += separator;
+		}
+	}
+	return b;
+}
+function join3(arr, separator)
+{
+	var b = '';
+	for(var i=0;i<arr.length-1;i++)
+	{
+		b += arr[i] + separator;
+	}
+	return b += arr[i];
+}
+function join4(arr, separator)
+{
+	var b = '';
+	for(var i=0;i<arr.length;i++)
+	{
+		i<arr.length-1 ? b += arr[i] + separator : b += arr[i];
+	}
+	return b;
+}
+function join5(arr, separator)
+{
+	var b = arr[0];
+	for(var i=1;i<arr.length;i++)
+	{
+		b += separator + arr[i];
+	}
+	return b;
+}
+console.log(reverse1(a));
+console.log(a);
+```
+
+#### 数组去重
+1. 不利用系统函数
+```
+var a = [44,11,66,121,22,11,0,5];
+function checkR(arr, n)
+{
+	for(var i=0;i<arr.length;i++)
+	{
+		if(n === arr[i])
+		{
+			return true;
+		}
+	}
+	return false;
+}
+function handle_arr(arr)
+{
+	var b = [];
+	for(var i=0; i<a.length; i++)
+	{
+		if(checkR(b, a[i]) == false)
+		{
+			b[b.length] = a[i];
+		}
+	}
+	return b;
+}
+console.log(handle_arr(a));
+```
+2. 利用系统函数：indexOf，push
+
+#### 数组复制
+1. 浅度复制
+> push
+2. 深度复制（如多维数组）
+> 判断类型再递归，typeof，instanceof，constructor，Object.prototype.toString.call()四者区别
+
+#### 数组排序
+> [十种排序方式详解](https://blog.csdn.net/hellozhxy/article/details/79911867)
+> 
+> 冒泡排序，选择排序，插入排序，快速排序
+> 
+> [二叉树专题](https://www.jianshu.com/p/bf73c8d50dc2)
+
 ---
 ### D8 字符串与正则表达式
+#### 字符串
+```
+//创建字符串
+var str = "abc"; //普通字符串
+var str1 = new String('abc'); //字符串对象，类似数组
+str[0] = str1[1] = "w"; //不能通过此方法改变
+//字符串对象方法
+var name1 = 'shiyanan';
+console.log(name1.charAt(1)); //查某个位置的字符
+console.log(name1.indexOf('ya')); //查某个字符串的位置
+//提取子字符串：string[x]，substring，slice，substr
+var date = "xiamen 2019.06.18";
+console.log(date[2]);
+console.log(date.substring(4,9));
+console.log(date.substring(4));
+console.log(date.substring());
+console.log(date.slice(4,9));
+console.log(date.slice(4));
+console.log(date.slice());
+console.log(date.slice(-4)); //支持倒数
+console.log(date.substr(4,3)); //第二个参数是长度
+console.log(date.substr(-4)); //支持倒数
+//大小写转化
+console.log(date.toLowerCase());
+console.log(date.toUpperCase());
+console.log(date);
+//拼接字符串
+console.log('myname'+' '+'is shiyanan');
+var a = 'myname';
+var b = ' ';
+var c = 'is shiyanan';
+var d = a.concat(b,c);
+console.log(d);
+//分隔字符串
+str.split(':').toString();
+str.split('-').join('-');
+//查找字符串，替换
+str.search('shi');
+str.search(/\d/); //支持正则表达式
+str.indexOf('shi');
+str.match(/\d/); //正则表达式
+str.replace(/\d/),''); //替换，删除
+```
+
+#### 正则表达式
+> 字符串规则过滤
+
+```
+var reg = /age/;
+var reg = /d/;
+var reg = /\d/; //数字 reg.test("i am age of 18"); 检测参数内是否含有数字 true
+var reg = /\D/; //非数字 reg.test("i am age of 18"); 检测参数内是否含有非数字 true
+var reg = /^\d/; //行首是否存在数字
+var reg = /^Abc/;
+var reg = /com$/; //行尾是否存在com
+var reg = /^\d{4,6}$/; //re.test("12345") 4~6次数字
+var reg = /^\d{6}$/; //刚好6次数字
+var reg = /^\d{6,}$/; //连续出现6次以上数字，至少6次
+var reg = /^\d+$/; //只能输入数字，1个以上，相当于{1,}
+var reg = /^\d*$/; //只能输入数字，0个以上，相当于{0,}
+var reg = /^\d?$/; //只能输入数字，0个或1个，相当于{0,1}
+var reg = /^[123]$/; //1或2或3
+var reg = /^[1-9]$/; //1到9的一个数
+var reg = /[ab]/ = /a|b/; //a或者b
+var reg = /[a-zA-Z]/ = /[a-z]|[A-Z]/; //大小写英文字母
+var reg = /^[a-zA-Z]+$/; //只能输入英文
+var reg = /[^a-z]/; //非a-z
+var reg = /[\u4e00-\u9fa5]/; //检测中文 console.log(reg.test('a我爱你b'));
+var reg = /./; //任意字符
+var reg = /\.com/; //转义后表示.本身
+var reg = /\w/; //字母、数字、下划线
+```
+```
+//验证一年的12个月（正确格式为01-09和1-12）
+var reg1 = /^[1-9]$/; //1 2 3 4 5 6 7 8 9
+var reg2 = /^0[1-9]$/; //01 02 03 04 05 06 07 08 09
+var reg3 = /^1[012]$/; //10 11 12
+var reg = /^[1-9]|0[1-9]|1[012]$/;
+var reg = /^0?[1-9]|1[012]$/;
+```
+```
+var str = 'my age 是 18';
+var reg = /\d/ig; //i(ignore)忽略大小写 g(global)全局检测
+console.log(str.match(reg));
+```
+```
+//去除首尾空格 \s
+var str = ' i am age of 18 ';
+var reg = /(^\s+)|(\s+$)/g;
+console.log(str.replace(reg,''));
+```
+```
+//邮箱过滤 window.onload后执行
+var reg = /^\w+@[a-z0-9]+\.[a-z]{2,4}$/;
+/^\w+ 行首是大小写字母、数字、下划线的多个字符
+@[a-z0-9] 表示@后是英文或数字
+\. 转义字符.（因.是关键字）
+[a-z]{2,4}$/ 行尾是2到4个英文字母
+```
+
+* 验证用户密码
+* 验证身份证号
+* 验证Internet地址
+
+#### 作业
+1. 实现字符串indexOf函数
+2. 实现一函数，判断一个字符串是不是回文字符串（从左右读右左读是一样的。比如"Level"）
+
 ---
 ### D9 内建对象和函数对象
+> [JavaScript对象](http://www.w3school.com.cn/jsref/index.asp)
+
+#### 内建对象
+1. String 字符串对象
+
+2. Number 数值对象
+```
+var n = new Number(55);
+```
+
+3. Array 数组对象
+
+4. Math 对象：数学函数
+```
+var d = Math.random();
+```
+
+5. Date 对象：日期时间
+```
+var d = new Data();
+console.log(Date());
+d.getYear();
+d.getDate();
+d.getDay();
+d.getHours();
+d.getMonth();
+```
+
+6. DOM 对象
+> 定义了访问和操作HTML文档的属性和方法
+```
+document.getElementById('a');
+```
+
+7. BOM 对象
+> 定义了访问和操作浏览器的属性和方法
+```
+//window对象可以省略
+console.log(window.location);
+console.log(location);
+window.alert('a');
+alert('a');
+var callback = function(){console.log(Date())};
+window.setTimeout(callback, 3000); //3000毫秒后回调函数
+```
+
+#### 函数对象
+##### 面向对象
+> [Javascript的继承与多态](https://www.jianshu.com/p/5cb692658704)
+
+* 封装（快速打包）：隐藏，分而治之，复用，
+* 继承（父子）
+* 多态（不同类型）
+
+##### 定义函数对象（非普通函数）
+```
+//1. 定义属性
+function Person(name, age, face) //Person此处是构造函数，习惯性大写首字母，PHP的类
+{
+	this.name = name;
+	this.age = age;
+	this.face = face;
+}
+//2. 定义方法
+Person.prototype.sing = function()
+{
+	console.log('sing');
+}
+Person.prototype.run = function()
+{
+	console.log('run');
+}
+//3. 创建一个新对象（实现）
+var syn = new Person("shiyanan",18,'ugly'); //运行构造函数Person，拷贝方式分配新空间，所以可单独更改
+var lzb = new Person("lzb",32,'handsome'); //再创建一个，分配了一个新的实例空间
+console.log(syn.name);
+console.log(lzb);
+syn.name = 'abc';
+lzb.name = 'fff';
+console.log(syn, lzb);
+lzb.run();
+syn.run();
+syn.length = 160; //动态增加属性，JS动态语言可以，但只在syn实例内增加
+syn.look = function() //动态增加方法，但只在syn实例内增加
+{
+	console.log('syn look');
+}
+Person.prototype.walk = function() //动态更改对象的方法，更改后所有实例都会有
+{
+	console.log(this.name + ' walking');
+}
+syn.walk(); //实例继承了对象的属性和方法
+lzb.walk();
+delete syn.name; //动态删除对象属性，不能删除方法
+```
+
+##### this用法
+```
+var age = 30; //全局对象都相当于window的属性
+var man = {
+	name: 'syn',
+	age: 18,
+	getName: function()
+	{
+		console.log(this.name);
+	},
+	getAge: function()
+	{
+		function aaa() //局部函数
+		{
+			console.log(this + ' ' + this.age); //局部普通函数里的this指的是window对象
+		}
+		aaa(); //相当于window.aaa()
+		this.aaa();
+		console.log(this + ' ' + this.age); //作为对象的方法时，this指向的是这个对象
+		return this; //用于链式调用
+	},
+	aaa:function()
+	{
+		console.log(this.age);
+	}
+}
+man.getName(); //man对象调用方法，this指向man对象
+man.getAge().getName();
+//函数对象中的this
+function Person()
+{
+	this.name = 'syn';
+}
+Person.prototype.getName = function()
+{
+	console.log(this.name); //this指向实例
+	return this; //用于链式调用
+}
+var p1 = new Person();
+p1.getName();
+```
+
+##### call/apply让函数服务不同的对象
+```
+var obj1 = {
+	name:'syn',
+	age:18
+}
+var obj2 = {
+	name:'lzb',
+	age:30
+}
+age = 40;
+getAge();
+var age = 40;
+getAge();
+function getAge()
+{
+	console.log(this.age);
+}
+getAge.call(obj1); //callback
+getAge.apply(obj2); //让函数服务不同的对象，和call的区别是传参不一样
+//call和apply的区别
+var stu1 = {
+	name:'name1',
+	age:20,
+	say:function(a,b)
+	{
+		console.log(this.name+' '+this.age+' '+a+' '+b);
+	}
+};
+var stu2 = {
+	name:'syn',
+	age:18
+};
+var stu3 = {
+	name:'lzb',
+	age:32
+};
+stu1.say.call(stu2,'清华','北大');
+stu1.say.apply(stu3,['交大','南大']);
+```
+```
+//继承函数对象
+function Person()
+{
+	this.class = "脊椎动物";
+	this.legs = 4;
+}
+Person.prototype.eat = function()
+{
+	console.log('use mouth');
+}
+function AsianPeople()
+{
+	Person.call(this);
+	this.skin = "yellow";
+}
+function Syn()
+{
+	AsianPeople.call(this);
+	this.gender = 'female';
+}
+var syn = new Syn();
+console.log(syn.legs, syn.skin, syn.gender);
+```
+
+##### bind防止this丢失
+```
+var name = 'syn';
+var obj = {
+	name : 'lzb',
+	getName: function()
+	{
+		console.log(this.name); //this动态绑定，谁用就指向谁
+	}
+}
+obj.getName();
+var fn = obj.getName;
+fn(); //相当于window.fn()
+var fn1 = obj.getName.bind(obj);
+fn1(); //类似于obj.getName.call(obj);
+//实现bind函数
+Function.prototype.bind2 = function(obj)
+{
+	var self = this;
+	return function(){
+		self.apply(obj,arguments);
+	};
+}
+var fn2 = obj.getName.bind2(obj);
+fn2();
+```
+
+#### 作业
+```
+题1. 下面程序输出信息是 
+function Foo() {
+getName = function () { alert (1); }; //为定义的变量，会默认加全局声明
+return this;
+}
+var getName = function () { alert (4);};
+Foo().getName(); 
+---
+题2. 下面程序输出信息是 
+var getName = function () { alert (4);};
+function getName() { alert (5);}	 
+getName(); 
+---
+题3. 下面程序结果是什么？
+function foo(){
+foo.a = function(){alert(1)}; 
+this.a = function(){alert(2)};
+a = function(){alert(3)};
+var a = function(){alert(4)};
+}; 
+foo.prototype.a = function(){alert(5)};
+foo.a = function(){alert(6)};
+foo.a(); 
+var obj = new foo();
+obj.a(); 
+foo.a(); 
+---
+题4. 下面的代码会输出什么结果？给出你的答案 
+var name = 'lili';
+var obj = {
+name: 'liming',
+prop: {
+name: 'ivan',
+getname: function() {
+return this.name;
+}
+}
+};
+console.log(obj.prop.getname()); 
+var test = obj.prop.getname; 
+console.log(test()); 
+题5. 解决前一个问题，使输出一致
+```
+
 ---
 ### D10 原型
+> 原型可称为一种创建模式，它提供了一种创建对象的最佳方式。
+
+#### 原型属性方法
+```
+new Person(a,b); //创建原型实例
+var a = new Person(1,2); //a存放指向原型实例的引用地址
+var b = new Person(2,2); //写时复制，只有在新增或更改键值对时才复制
+//本身找不到，才去原型里找，节省空间
+```
+
+#### 原型继承
+```
+function Person(name,sex)
+{
+	this.name = name;
+	this.sex = sex;
+}
+Person.prototype.getName = function()
+{
+	console.log(this.name);
+}
+function Teacher(name,sex,lang)
+{
+	Person.call(this,name,sex); //属性继承
+	this.lang = lang;
+}
+Teacher.prototype = new Person(); //方法继承
+//prototype.constructor仅仅可以用于识别对象是由哪个构造函数初始化的，仅此而已。
+Teacher.prototype.constructor = Teacher;
+Teacher.prototype.getLang = function()
+{
+	console.log(this.lang);
+}
+var me = new Teacher('lzb','male','English');
+me.getLang();
+me.getName();
+me.getName = function() //只影响实例本身
+{
+	console.log('new name');
+}
+me.getName();
+Person.prototype.getName = function()
+{
+	console.log('proto name');
+}
+delete me.getName; //删除实例的方法
+me.getName(); //一级级回溯原型的方法
+```
+> 原型回溯机制：当前没有，则回溯上级
+> 
+> [为什么要设置prototype.constructor](https://blog.csdn.net/yiifaa/article/details/72809704)
+
+#### 继承动态更改
+* 动态语言可更改 Class.prototype.function
+
+#### 控制台查看继承
+1. firebug插件，查看DOM
+2. chrome Sources，查看Scope->global，加入断点或debugger;代码
+
+#### 作业
+```
+1. 下面输出结果是：
+　　　　function fun1(a){
+　　　　　　this.a = a;
+　　　　}
+　　　　function fun2(a){
+　　　　　　if(a){
+　　　　　　　　this.a = a;
+　　　　　　}
+　　　　}
+　　　　fun1.prototype.a = 1;
+　　　　fun2.prototype.a = 1;
+　　　　console.log(new fun1().a);
+　　　　console.log(new fun2(2).a);
+---
+2. 已知如下类father，要求设计一个son类继承自father，并实现如下功能： 
+function father(){ 
+this.name = "father"; 
+this.showName = function(){ 
+console.log(this.name); 
+} 
+} 
+function son(){ 
+this.name = "son"; 
+this.showName1 = function(){ 
+console.log(this.name); 
+} 
+this.showName2 = function(){ 
+console.log(this.name); 
+} 
+this.showName3 = function(){ 
+console.log(this.__super.name + "= >" + this.name); 
+} 
+} 
+请完善son部分相关代码，得到如下结果 
+var son = new son(); 
+console.log(son instanceof father ); // 得到：true 
+son.showName1(); // 得到："son" (需要读到son中的name属性) 
+son.showName2(); // 得到：”father" (需要读到father中的name属性) 
+son.showName3(); //得到：”father" => "son" (需要同时读到son中的name和father中的name) 
+```
+
 ---
 ### D11 ES6-概述
+* 全称ECMAScript6.0，2015年发布的JS标准
+* 使JS更安全易用
+* 能编写复杂的大型应用程序
+* 浏览器支持越来越完善，许多应用都用它
+* 如node.js react等，是未来的方向
+* 学习：掌握核心语法
+
+#### 环境安装
+* [安装nodejs](https://nodejs.org)
+* ES6转ES5 babel 或 [在线转译](https://babeljs.io/repl/)
+* [HBuilderX的nodejs插件配置](http://ask.dcloud.net.cn/article/19599)
+* [HBuilderX scss/sass 使用教程](http://ask.dcloud.net.cn/article/35683)
+* [手把手教你如何在Node中使用ES6](https://www.jianshu.com/p/c1865ee36edb)
+
+#### 模块化
+* [JS模块化](https://www.imooc.com/article/43781?block_id=tuijian_wz)
+* html,js,css分开放置，多文件整合
+* ES5无模块化功能，多文件可能冲突 → 通过CommonJS和AMD模块规范来实现
+* ES6通过模块化实现
+
+##### CommonJS同步，后端JS模块化
+* CommonJS规范：一文件一模块，单独的作用域，同步加载（后端采用nodejs，react等）
+* require 引用模块
+* module.exports 导出模块
+* 安装nodejs后即支持CommonJS
+```
+//m.js
+var count = 1;
+function msg()
+{
+	console.log('ttt');
+}
+module.exports.count = count;
+module.exports.msg = msg;
+//m2.js
+var count = 2;
+function msg()
+{
+	console.log('ttt2');
+}
+module.exports.count = count;
+module.exports.msg = msg;
+//user.js
+var obj = require('./m.js');
+var obj2 = require('./m2.js');
+console.log(obj.count);
+obj2.msg();
+//node
+>node user.js
+```
+
+##### AMD异步，前端js模块化
+* AMD规范：异步加载模块，允许指定回调函数，前端采用如浏览器
+* require(["js/a"]); //使用模块   define //定义模块
+* 支持AMD //需下载RequireJS库
+
+##### ES6模块化功能import
+```
+//m.js
+var count = 1;
+function msg()
+{
+	console.log('msg');
+}
+export {count,msg};
+//export var count = 1;
+//export var msg = 2;
+//js.js
+import {count,msg} from "./m";
+console.log(count);
+```
+* ES6模块是静态的，不能通过if语句等动态加载
+
+##### ES6引用传递 vs CommonJS值拷贝（缺陷）
+```
+//CommonJS
+count++; //值没变
+getCount(); //闭包，值改变
+//ES6
+//解决了上述问题，以及安全性问题
+```
+
+#### 作业
+```
+1.es5有模块化功能吗， 它通过什么来实现的模块化的。
+2.es6有模块化功能吗， 它通过什么来实现的模块化的。
+3. nodejs 虽支持大部分es6语法，但import export不支持，通过安装什么来实现：
+4. 下面使用AMD语法的是
+A. require //引用模块
+module.exports //导出模块 
+B.	require(["js/a"]); //使用模块
+define //定义模块 
+5. es6模块相比 CommonJS 是 值拷贝还是引用传递
+```
+
 ---
 ### D12 ES6面向对象、let和const
+#### 创建类的属性和方法，继承，防止this丢失，静态方法
+```
+//创建类的属性和方法
+class Person{
+	//构造函数
+	constructor(name,gender){
+		this.name = name;
+		this.gender = gender;
+		this.getName = this.getName.bind(this); //防止this丢失，参考下节
+	}
+	getName(){
+		console.log(this.name);
+	}
+	setName(name){
+		this.name = name;
+	}
+	static getName()
+	{
+		console.log('static ' + this.name);
+	}
+}
+var obj = new Person('shiyanan','f');
+console.log(obj.name);
+obj.getName();
+obj.setName('lzb');
+obj.getName();
+//继承
+class Teacher extends Person{
+	constructor(name,gender,age){
+		super(name,gender); //继承父类属性和方法
+		this.age = age; //新增属性
+	}
+	speak(lang)
+	{
+		console.log("I can speak " + lang);
+	}
+}
+var obj2 = new Teacher('liming','m',33);
+obj2.speak('English');
+//父变子也变，动态更改，C和java等不支持
+Person.prototype.getGender = function(){
+	console.log(this.gender);
+}
+obj.getGender();
+obj2.getGender();
+//防止this丢失
+var method = obj.getGender();
+method(); //报错，因为this指向window对象
+//静态方法
+Person.getName();
+Teacher.getName();
+//静态属性
+Person.grade = 2;
+Teacher.school = "qinghua";
+console.log(obj.grade); //undefined
+console.log(Teacher.grade); //OK
+```
+
+#### 提升安全性
+* 先声明后使用（避免变量提升），避免运行时出错
+```
+console.log(foo); //输出undefined
+console.log(bar); //报错
+var foo = 2;
+let bar = 1;
+```
+* 避免重复声明，覆盖不确定性情况
+```
+var a = 0;
+function aa()
+{
+	var a = 1;
+	var a = 3;
+	console.log(a);
+	let a = 4; //不能通过
+	{
+		let a = 5; //可以通过
+	}
+}
+aa();
+function bb(arg)
+{
+	var arg = 5; //潜在隐患
+	let arg = 5; //不能通过
+	console.log(arg);
+}
+bb(4); //输出5
+```
+* 暂时性死区
+```
+var tmp = 2;
+if(true)
+{
+	console.log(tmp);
+	let tmp = 1; //不能通过，let将变量所在块作用域锁死，不允许重名情况出现
+}
+```
+* 避免同名，内层覆盖外层
+```
+var tmp = 2;
+function aa()
+{
+	console.log(tmp);
+	if(false)
+	{
+		console.log(tmp); //undefined
+		var tmp = 9; //let tmp = 9
+	}
+}
+aa();
+```
+* 变量泄露
+```
+for(let i=0; i<3; i++)
+{
+	console.log(i);
+}
+console.log(i); //undefined
+```
+* 闭包（let可实现块作用域现场保护）
+```
+var a = [];
+for(var i=0; i<10; i++) //let i
+{
+	a[i] = function()
+	{
+		console.log(i);
+	}
+}
+console.log(i);
+a[6]();
+a[7]();
+```
+
+#### 块作用域，避免空间污染
+```
+if(true)
+{
+	var a = 1;
+	let b = 2;
+}
+console.log(a,b); //b无法访问
+function aa()
+{
+	{
+		var a = 1;
+		let b = 2;
+	}
+	console.log(a);
+	console.log(b); //b无法访问
+}
+aa();
+```
+```
+//匿名函数自执行
+(function(){
+	var tmp = 1;
+})();
+console.log(tmp);
+//块作用域
+{
+	let tmp2 = 2;
+}
+console.log(tmp2);
+//强制严格模式，强制ES6执行，才能使块作用域生效
+"use strict"
+{
+	function aa(){}
+}
+aa();
+```
+
+#### const只读变量，支持块作用域
+```
+const size = 100;
+console.log(size);
+size = 88; //更改则报错，只读提升安全性
+function fn(size)
+{
+	size = 5;
+	console.log(size);
+}
+fn();
+//对象指向地址，可更改
+const obj = {name:"lzb"};
+obj.name = "syn";
+console.log(obj);
+//支持块作用域
+if(true)
+{
+	const name = 'lzb';
+}
+console.log(name);
+```
+
+#### 作业
+```
+1.用ES6来改写下面的ES5的原型。
+function Point(x, y) {
+this.x = x;
+this.y = y;
+}
+Point.prototype.toString = function () {
+return '(' + this.x + ', ' + this.y + ')';
+};
+var p = new Point(1, 2);
+---
+2. 下面输出结果是，即原因是什么？	及解决方法
+class Student { 
+constructor(age) {
+this.age = age; 
+}	
+getAge(){console.log(this.age)} 
+}	
+var obj = new Student('ivan','female');
+var funTemp = obj.getAge; 
+funTemp(); 
+---
+3.说明下题的结果，及原因
+{
+let a =10 ;
+var b = 1;
+}
+console.log(b);
+console.log(a);
+---
+4.说明下题的结果，及原因
+var a=[];
+for(var i=0;i<10;i++){
+a[i]=function(){
+console.log(i)
+}
+}
+a[6]();
+var b=[];
+for(let j=0;j<10;j++){
+b[j]=function(){
+console.log(j)
+}
+}
+b[6]();
+```
+
 ---
 ### D13 ES6-变量的解构赋值
+#### 箭头函数
+* 左边是参数=>右边是返回值
+```
+var num;
+var fn = num => num + 1;
+var fn1 = () => num + 1;
+var fn2 = (x,y) => x + y;
+var fn3 = (x,y) => {
+	var sum = x + y;
+	sum *= 2;
+	return sum;
+};
+fn();
+fn1();
+```
+
+* 解决了this丢失问题
+```
+//foo箭头函数安全
+function foo(){
+	setTimeout(()=>{
+		console.log('id:',this.id);
+	},100);
+}
+foo.call({id:42});
+//fo的this丢失
+function fo()
+{
+	setTimeout(function(){
+		console.log('id2:',this.id);
+	},1000)
+}
+fo.call({id:32});
+```
+
+#### 数组解构（智能匹配）
+```
+//多个变量赋值
+var [a,b,c] = [1,'2','syn'];
+var [,y,] = [1,2,3,4];
+var [a,[b,c],d] = [1,[2,3],4];
+//默认值
+let [x,y=0] = [3];
+var [x=1,y=x] = [2];
+let [x=1,y=x] = [2,3];
+let [x=y,y=1] = []; //undefined,1
+//交互x,y的值
+var [x,y] = [y,x];
+//赋值
+var [x=true] = [];
+var [x,y='b'] = ['a']; //x='a',y='b'
+var add = function(x){return x+1}
+var [x=add,y] = [function(y){return y-1},2];
+x(2);
+```
+
+#### 对象解构
+```
+var React = {
+	name:'aaa',
+	size:23,
+}
+var {
+	name,size:len
+} = React;
+console.log(name,len);
+```
+
+#### 嵌套解构
+```
+var obj = {
+	p:[
+		'hello',
+		{y:'world',z:34}
+	]
+}
+var {
+	p:[x,{y,z:n},m]
+} = obj;
+console.log(x,y,n,m);
+```
+
+#### 字符串解构
+```
+var [a,b,c,d,e] = 'hello';
+console.log(a,b,c,d,e);
+var {length:len} = 'hello';
+console.log(len);
+```
+
+#### 函数解构
+```
+function add([x,y])
+{
+	console.log(x+y);
+}
+add([3,5]);
+//ES6参数默认值设置
+function setPrice(id=80,price=200)
+{
+	console.log(price)
+}
+setPrice(30,50)
+setPrice();
+//对象参数
+function move({x=0,y=1})
+{
+	console.log(x,y);
+}
+move({x:30,y:60});
+//不定参，扩展运算符
+function sum(...a)
+{
+	for(var i=0;i<a.length;i++)
+	{
+		console.log(a[i]);
+	}
+}
+sum(1,2,3,4)
+function sum1(x,y,z)
+{
+	return x+y+z;
+}
+sum1(...[1,2,3]);
+var a1 = [2,4], a2 = ['a','b'], a3 = [5,6];
+var a4 = [...a1,...a2,...a3];
+console.log(a4);
+//返回多个值
+function getPerson()
+{
+	return {
+		name:"shiyanan",
+		age:18,
+		gender:"female"
+	};
+}
+var obj = getPerson();
+console.log(obj);
+var {name,gender,age} = obj;
+console.log(name,age,gender);
+```
+
+#### 作业
+```
+1. 下题输出结果是，并解释原因
+(function(x, f = () => x) {
+var x;
+var y = x;
+x = 2;
+return [x, y, f()];
+})(1)
+---
+2. 下题输出结果是，并解释原因
+(function() {
+return [
+(() => this.x).bind({ x: 'inner' })(),
+(() => this.x)()
+]
+}).call({ x: 'outer' });
+---
+3. 下题输出是多少
+let [y = x,x = 2] = [6,];
+console.log(x);
+console.log(y);
+---
+4. 下题输出是多少，要输出5，怎么改。
+function sum(x,y){
+console.log(x+y);
+}
+sum([2,3]);
+---
+5. 下题输出是多少，并说出原因
+var student = { 
+name: "ivan",
+age : 35,
+city : 'chengdu',
+}
+var {
+age, 
+city, 
+len, 
+} = student;	
+console.log(age);
+console.log(len); 
+---
+6. 下题输出是多少，并说出原因
+function getPerson() {
+return {
+name: 'ivan',
+age: 30
+};
+}
+var { age,name2 } = getPerson();
+console.log(name2);
+console.log(age);	
+```
+
 ---
 ### D14 ES6-Map和Set数据结构、循环
+#### 集合
+1. Array
+2. Object
+3. Map 是键值对key-value的集合：Object的改进版（key可以是数值，查找快）
+4. Set 是key的集合（无value）：Array的改进版（不重复）
+
+#### Object遍历：key是字符串，查找慢
+```
+var obj = {name:'shiyanan',age:18}
+for(var key in obj)
+{
+	console.log(typeof key);
+}
+```
+
+#### Map遍历
+```
+var p = new Map([['name','shiyanan'],['age',30],[1,'lzb']]);
+console.log(p);
+console.log(p.get('name'));
+console.log(p.get(1));
+p.set('name',38);
+p.set('school','qinghua');
+p.delete('name');
+console.log(p.get('school'));
+console.log(p.has('age'));
+console.log(p.has('name'));
+p.set(8,333);
+console.log(p.get(8));
+for(let key of p.keys())
+{
+	console.log(key);
+}
+for(let value of p.values())
+{
+	console.log(value);
+}
+for(let item of p.entries())
+{
+	console.log(item);
+}
+```
+
+#### Set遍历
+```
+var stu = ['lili','lucy','lzb','shiyanan',9527,9527];
+var stu1 = new Set(['lili','lucy','lzb','shiyanan',9527,9527]); //不能重复
+console.log(stu1);
+for(var i of stu1.keys()) //只有key
+{
+	console.log(i);
+}
+```
+
+#### for of遍历
+1. for 缺陷（过于原始，编写麻烦）
+2. forEach 回调 缺陷（只用于数组，不能break return）
+3. for in 缺陷（用于数组不安全会将属性也遍历，且效率低）
+4. for of 统一了遍历方法
+```
+//替代forEach
+var age = [10,20,30,40];
+age.forEach(
+	function(v)
+	{
+		console.log(v*1.2);
+	}
+);
+for(let v of age)
+{
+	function a(v)
+	{
+		console.log(v*1.2);
+	}
+	if(v>30)
+	{
+		break;
+	}
+	a(v);
+}
+//替代for in
+var person = {
+	name:'shiyanan',
+	age:18,
+	1:'lzb'
+}
+for(var k in person)
+{
+	console.log(k+' '+ person[k]);
+}
+for(let key of Object.keys(person)) //Object.keys迭代器iterator，字符串效率低
+{
+	console.log(key + ' type:' + typeof key + ' ' + person[key]);
+}
+```
+
+#### 总结
+1. ES6易用，安全，支持大型应用
+2. import export 模块化
+3. 类继承 class extends
+4. let const 块作用域
+5. 箭头函数，绑定了this
+6. 解构赋值
+7. 遍历，易用安全效率
