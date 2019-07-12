@@ -286,6 +286,14 @@ console.log(c.siteUrl);
 * var obj = {}; //空的对象，指向的对象存在，但里面什么都没有
 * var name = ''; //空的字符串
 
+#### 判断数组类型
+```
+function isArrayFn (o)
+{
+	return Object.prototype.toString.call(o) === '[object Array]';
+}
+```
+
 #### 作业
 ```
 1题：运行的结果？
@@ -2333,7 +2341,7 @@ for(let i=0; i<3; i++)
 {
 	console.log(i);
 }
-console.log(i); //undefined
+console.log(i); //报错is not defined
 ```
 * 闭包（let可实现块作用域现场保护）
 ```
