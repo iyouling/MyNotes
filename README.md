@@ -1,2 +1,2 @@
 # MyNotes
-Learn everything
+Keep learning
